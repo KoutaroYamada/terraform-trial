@@ -41,3 +41,30 @@ resource "aws_subnet" "subnet2" {
     Name = "subnet2"
   }
 }
+
+resource "aws_internet_gateway" "internet_gateway1" {
+  vpc_id = aws_vpc.vpc.id
+
+  tags = {
+    Name = "internet_gateway1"
+  }
+}
+
+resource "aws_route_table" "route_table1" {
+  vpc_id = aws_vpc.vpc.id
+
+  route {
+    cidr_block = "10.0.0.0/8"
+    gateway_id = aws_internet_gateway.internet_gateway1.id
+  }
+}
+
+resource "aws_route_table_association" "route_table_association1" {
+  subnet_id      = aws_subnet.subnet1.id
+  route_table_id = aws_route_table.route_table1.id
+}
+
+resource "aws_route_table_association" "route_table_association2" {
+  subnet_id      = aws_subnet.subnet2.id
+  route_table_id = aws_route_table.route_table1.id
+}
